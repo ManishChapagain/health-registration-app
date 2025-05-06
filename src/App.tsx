@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { PGlite } from "@electric-sql/pglite";
+import { Repl } from "@electric-sql/pglite-repl";
 
 // idb since we want persistence
 const db = new PGlite("idb://health-db");
@@ -78,7 +79,14 @@ function App() {
           </div>
           <button type="submit">Add Record</button>
         </form>
-        {submitted && <p>Record added!</p>}
+        <div style={{ height: "40px" }}>
+          {submitted && <p>Record added!</p>}
+        </div>
+      </div>
+      <h2>Interact with the database using raw SQL queries</h2>
+      <div style={{ height: "400px" }}>
+        {/* repl component to query db using queries */}
+        <Repl pg={db} />
       </div>
     </>
   );
