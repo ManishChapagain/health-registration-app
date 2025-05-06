@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
-import { PGlite } from "@electric-sql/pglite";
 import { Repl } from "@electric-sql/pglite-repl";
+import { PGliteWorker } from "@electric-sql/pglite/worker";
 
-// idb since we want persistence
-const db = new PGlite("idb://health-db");
+const db = new PGliteWorker(
+  new Worker(new URL("./db/worker.js", import.meta.url), {
+    type: "module",
+  })
+);
 
 function App() {
   const [name, setName] = useState("");
