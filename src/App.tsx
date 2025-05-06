@@ -1,5 +1,87 @@
+import { useEffect, useState } from "react";
+import { PGlite } from "@electric-sql/pglite";
+
+// idb since we want persistence
+const db = new PGlite("idb://health-db");
+
 function App() {
-  return <></>;
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
+  const [diagnosis, setDiagnosis] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    db.query(`
+      CREATE TABLE IF NOT EXISTS health_records (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        age INTEGER NOT NULL,
+        diagnosis TEXT NOT NULL
+      );
+    `);
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !diagnosis || !age) return;
+
+    await db.query(
+      `INSERT INTO health_records (name, age, diagnosis) VALUES ($1, $2, $3)`,
+      [name, age, diagnosis]
+    );
+
+    setSubmitted(true);
+    setName("");
+    setAge("");
+    setDiagnosis("");
+
+    setTimeout(() => setSubmitted(false), 3000);
+  };
+
+  return (
+    <>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <h2>Add Health Record</h2>
+        <form
+          onSubmit={handleSubmit}
+          style={{
+            display: "flex",
+            gap: "10px",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          }}
+        >
+          <div style={{ display: "flex", gap: "10px" }}>
+            <label>Name: </label>
+            <input value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <label>Age: </label>
+            <input
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+              type="number"
+            />
+          </div>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <label>Diagnosis: </label>
+            <input
+              value={diagnosis}
+              onChange={(e) => setDiagnosis(e.target.value)}
+            />
+          </div>
+          <button type="submit">Add Record</button>
+        </form>
+        {submitted && <p>Record added!</p>}
+      </div>
+    </>
+  );
 }
 
 export default App;
