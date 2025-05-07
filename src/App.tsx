@@ -86,7 +86,7 @@ function App() {
       <h2>Interact with the database using raw SQL queries</h2>
       <div style={{ height: "400px" }}>
         {/* repl component to query db using queries */}
-        <Repl pg={db} />
+        <Repl pg={db} theme="dark" />
       </div>
     </>
   );
