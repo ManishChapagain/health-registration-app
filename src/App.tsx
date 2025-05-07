@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
 import { Repl } from "@electric-sql/pglite-repl";
 import { PGliteWorker } from "@electric-sql/pglite/worker";
+import Worker from "./db/worker.js?worker";
 
-const db = new PGliteWorker(
-  new Worker(new URL("./db/worker.js", import.meta.url), {
-    type: "module",
-  })
-);
+const db = new PGliteWorker(new Worker());
 
 function App() {
   const [name, setName] = useState("");
